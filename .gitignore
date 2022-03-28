@@ -1,0 +1,29 @@
+# OS Files
+.DS_Store
+
+# Emacs
+auto-save-list
+eshell
+
+# project.el files
+projects
+
+# perspective.el files
+persp
+recentf
+recentf~
+
+# Packages
+elpa
+themes
+
+# Hide all backed up files
+*~
+
+# Hide temporary files
+\#*
+.#*
+*#
+
+# LSP files
+.lsp-session-v*
