@@ -1,35 +1,7 @@
-;; ---------------------------------------------------------------------------
-;; Custom Function
-;; ---------------------------------------------------------------------------
-
-(defun check-and-install-packages (symbol-list)
-  "Check if packages list is Installed and install if necessary"
-  (setq install-list ())                             ;; Variable to hold uninstalled items
-
-  ;; Construct install list
-  (while symbol-list
-    (setq item (car symbol-list))                    ;; Get first item in list
-    (if (not (package-installed-p item))             ;; Check if item is installed
-        (progn (message "Not Installed: %s"
-                        (symbol-name item))
-               (push (make-symbol                    ;; Add item to install list
-                      (symbol-name item))
-                      install-list))
-      (message "Already Installed: %s"
-               (symbol-name item)))                  ;; End-if
-    (setq symbol-list (cdr symbol-list)))            ;; Truncate list
-  (message "To Install: %s" install-list)            ;; Display install list
-
-  ;; Install items
-  (when install-list                                 ;; If there are packages to install
-    (package-refresh-contents)                       ;; Download latest ELPA package info
-    (while install-list
-      (progn (setq item (car install-list))              ;; Get next item to install
-             (package-install item)                      ;; Install item
-             (setq install-list (cdr install-list))))))  ;; Truncate list
+(use-package lsp-ui)
 
 ;; ---------------------------------------------------------------------------
-;; <leaf-install-code>
+;; <Leaf-install-code>
 ;; ---------------------------------------------------------------------------
 
 (eval-and-compile
@@ -43,10 +15,10 @@
   (custom-set-variables '(gnutls-algorithm-priority "normal:-vers-tls1.3"))
 
   ;; Add .ghcup to Emacs exec-path
-  (setq exec-path (append exec-path '("/path/to/.ghcup/bin")))
+  (setq exec-path (append exec-path '("/home/user/.ghcup/bin")))
 
   ;; Add .ghcup to environment PATH
-  (setenv "PATH" (concat (getenv "PATH") ":/path/to/.ghcup/bin"))
+  (setenv "PATH" (concat (getenv "PATH") ":/home/user/.ghcup/bin"))
   
   ;; Code for installing leaf
   (unless (package-installed-p 'leaf)
@@ -66,13 +38,21 @@
     (leaf lsp-mode :ensure t)
     (leaf lsp-ui :ensure t)
     (leaf lsp-haskell :ensure t)
+    (leaf yaml-mode :ensure t)
 
+    ;; Load iceberg-theme BEFORE brin theme 
     ;; https://github.com/conao3/iceberg-theme.el
     (leaf iceberg-theme
       :ensure t
       :config
-      (iceberg-theme-create-theme-file)
-      (load-theme 'solarized-iceberg-dark t))
+      (iceberg-theme-create-theme-file))
+    ;;(load-theme 'solarized-iceberg-dark t))
+
+    ;; Load brin theme for nicer syntax highlighting
+    (leaf sublime-themes
+      :ensure t
+      :config
+      (load-theme 'brin t))
     
     (leaf color-theme-sanityinc-tomorrow :ensure t)
     (leaf color-theme-sanityinc-solarized :ensure t)
@@ -99,18 +79,12 @@
 ;; Specify email address
 (setq user-email-address "your@email.com")
 
-;; Set font
-(if (eq system-type 'darwin)
-    ;; Font size 12 if Mac OS
-    (progn (set-frame-font "Hack 12" nil t))
-  ;; Otherwise font size 10
-  (set-frame-font "Hack 10" nil t))
-
 ;; Disable startup screen
 (setq inhibit-startup-screen 1)
 
 ;; Show file or directory at startup
-(setq initial-buffer-choice "~/.emacs.d/init.el")
+(setq initial-buffer-choice "~/Haskell")
+(cd "~/Haskell")
 
 ;; Make Text Mode the default mode for new buffers
 (setq-default major-mode 'text-mode)
@@ -168,6 +142,8 @@
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
+
+(global-set-key "\C-m" 'newline-and-indent)
 
 ;; Copy Line
 ;; https://www.emacswiki.org/emacs/CopyingWholeLines
@@ -281,7 +257,7 @@
 ;;   M-x customize-face
 
 ;; Add emacs folder to load path (removed)
-;;(add-to-list 'load-path "~/.emacs.d/packages")
+;; (add-to-list 'load-path "~/.emacs.d/packages")
 
 ;; Highlight the current line
 ;;     (require 'hl-line)
@@ -315,7 +291,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((((class color) (min-colors 89)) (:foreground "#c6c8d1" :background "#161821"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "gray12" :foreground "#c0c5ce" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 105 :width normal :foundry "CTDB" :family "Fira Code"))))
+ '(ansi-color-blue ((t (:background "deep sky blue" :foreground "deep sky blue" :weight normal))))
  '(company-tooltip ((((class color) (min-colors 89)) (:foreground "#767781" :background "#1a1c25"))))
  '(company-tooltip-annotation ((((class color) (min-colors 89)) (:foreground "#89b8c2"))))
  '(company-tooltip-annotation-selection ((((class color) (min-colors 89)) (:foreground "#89b8c2"))))
@@ -337,9 +314,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("3cc2385c39257fed66238921602d8104d8fd6266ad88a006d0a4325336f5ee02" default))
  '(gnutls-algorithm-priority "normal:-vers-tls1.3")
  '(haskell-hasktags-arguments ''("-e" "-x"))
- '(haskell-mode-hook '(haskell-indent-mode))
+ '(haskell-mode-hook '(haskell-indentation-mode))
  '(haskell-stylish-on-save nil)
  '(lsp-haskell-formatting-provider "stylish-haskell")
  '(package-archives
@@ -347,7 +326,7 @@
      ("melpa" . "https://melpa.org/packages/")
      ("gnu" . "https://elpa.gnu.org/packages/")))
  '(package-selected-packages
-   '(perspective project use-package lsp-haskell company leaf haskell-mode)))
+   '(yaml-mode perspective project use-package lsp-haskell company leaf haskell-mode)))
 
 ;; ---------------------------------------------------------------------------
 ;; Haskell Mode
@@ -367,10 +346,14 @@
 (add-hook 'haskell-mode-hook #'lsp)
 (add-hook 'haskell-literate-mode-hook #'lsp)
 
+;; F7 toggles lsp-lens-mode
+(add-hook 'haskell-mode-hook
+          (lambda () (local-set-key [f7] 'lsp-lens-mode)))
+
 ;;(add-hook 'haskell-mode-hook
 ;;          (lambda ()
 ;;            ;; 'haskell-navigate-imports' moves cursor to import list.
-;;            (define-key haskell-mode-map (kbd "f9") 'haskell-navigate-imports;;)))
+;;            (define-key haskell-mode-map (kbd "f9") 'haskell-navigate-imports)))
 
 (setq lsp-haskell-process-path-hie "ghcide")
 (setq lsp-haskell-process-args-hie '())
@@ -402,12 +385,33 @@
 ;; lsp-ui
 ;; ---------------------------------------------------------------------------
 
+;; Guide on enabling and disabling features:
+;; https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
+
 ;; https://github.com/flycheck/flycheck
 (setq lsp-ui-doc-enable t)
 (setq lsp-ui-doc-position "at-point")
 (setq lsp-ui-doc-delay 0.1)
 (setq lsp-ui-doc-show-with-cursor t)
 (setq lsp-ui-doc-show-with-mouse t)
+
+;; modeline
+(setq lsp-modeline-code-actions-enable t)
+(setq lsp-modeline-diagnostics-enable nil)
+
+(setq lsp-diagnostics-provider :flymake)
+(setq lsp-ui-sideline-enable t)
+(setq lsp-modeline-diagnostics-enable t)
+
+;; ---------------------------------------------------------------------------
+;; yaml-mode
+;; ---------------------------------------------------------------------------
+
+;; Required for Haskell indentation to work:
+;; https://www.emacswiki.org/emacs/YamlMode
+(add-hook 'yaml-mode-hook
+          (lambda ()
+            (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
 ;; ---------------------------------------------------------------------------
 ;; Vterm
@@ -543,7 +547,7 @@
 (use-package perspective
   :ensure t
   :bind
-  ("C-x C-b" . persp-list-buffers)   ; or use a nicer switcher, see below
+  ("C-x C-b" . persp-list-buffers)
   :init
   (persp-mode))
 
@@ -567,3 +571,77 @@
 ;; u              (persp-unmerge) Undo the effects of a persp-merge.
 ;; C-s            (persp-state-save) Save all perspectives in all frames to a file.
 ;; C-l            (persp-state-load) Load all perspectives from a file.
+
+;; -------------------------------------------------------------------
+;; ORG MODE
+;; -------------------------------------------------------------------
+;; Requires Font Lock mode: turn-on-font-lock
+
+;; Suggested bindings for popular commands
+;;
+(global-set-key (kbd "C-c l") 'org-store-link)
+;;(global-set-key (kbd "C-c a") 'org-agenda)
+;;(global-set-key (kbd "C-c c") 'org-capture)
+
+;; Make a file load org mode by adding:
+;; MY PROJECTS    -*- mode: org; -*-
+;;
+;; Or set variable: org-insert-mode-line-in-empty-file
+
+;; Number of empty lines needed to keep an empty line between
+;; collapsed trees.
+(setq org-cycle-separator-lines 2)
+
+;; Show everything on startup in an org document.
+;; Or add to files individually:
+;;     #+STARTUP: overview | content | showall | showeverything
+;;
+;; Any entries with `VISIBILITY` property get their visibility adapted accordingly.
+;; Allowed values: `folded | children | content | all`
+;;
+(setq org-startup-folded 'show-everthing)
+
+;; Define TODO keyword sequences 
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "DOING" "|" "DONE(d)")
+        (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)")))
+
+;; Record timestap when closing a TODO item.
+;; To record a note along with a timestamp:
+;;     (setq org-log-done 'note)
+;;
+(setq org-log-done 'time)
+
+;; ---------------------------------------------------------------------------
+;; Custom Function
+;; ---------------------------------------------------------------------------
+
+;; yaml-mode installed via:
+;; M-x package-install
+
+(defun check-and-install-packages (symbol-list)
+  "Check if packages list is Installed and install if necessary"
+  (setq install-list ())                             ;; Variable to hold uninstalled items
+
+  ;; Construct install list
+  (while symbol-list
+    (setq item (car symbol-list))                    ;; Get first item in list
+    (if (not (package-installed-p item))             ;; Check if item is installed
+        (progn (message "Not Installed: %s"
+                        (symbol-name item))
+               (push (make-symbol                    ;; Add item to install list
+                      (symbol-name item))
+                      install-list))
+      (message "Already Installed: %s"
+               (symbol-name item)))                  ;; End-if
+    (setq symbol-list (cdr symbol-list)))            ;; Truncate list
+  (message "To Install: %s" install-list)            ;; Display install list
+
+  ;; Install items
+  (when install-list                                 ;; If there are packages to install
+    (package-refresh-contents)                       ;; Download latest ELPA package info
+    (while install-list
+      (progn (setq item (car install-list))              ;; Get next item to install
+             (package-install item)                      ;; Install item
+             (setq install-list (cdr install-list))))))  ;; Truncate list
+
