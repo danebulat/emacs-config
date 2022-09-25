@@ -1,3 +1,5 @@
+(use-package lsp-ui)
+
 ;; ---------------------------------------------------------------------------
 ;; <Leaf-install-code>
 ;; ---------------------------------------------------------------------------
@@ -67,38 +69,10 @@
 ;; </leaf-install-code>
 
 ;; ---------------------------------------------------------------------------
-;; toggle-maximize-buffer
-;; ---------------------------------------------------------------------------
-
-(defun toggle-maximize-buffer () "Maximize buffer"
-  (interactive)
-  (if (= 1 (length (window-list)))
-      (jump-to-register '_) 
-    (progn
-      (window-configuration-to-register '_)
-      (delete-other-windows))))
-
-;; ---------------------------------------------------------------------------
 ;; General
 ;; ---------------------------------------------------------------------------
 
-;; Start frame maximized
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-;; https://www.emacswiki.org/emacs/WinnerMode
-;;
-;; C-c <left>
-;; C-c <right>
-(winner-mode 1)
-(global-set-key (kbd "C-c <up>") 'toggle-maximize-buffer)
-
-;; Configure recent files hotkey
-(require 'recentf)
-(recentf-mode 1)
-(setq recentf-max-menu-items 25)
-(global-set-key "\C-x\ \C-r" 'recentf-open-files)
-
-;; Package cl deprecated and being used in haskell-mode package.
+;; Package cl deprecated and being used in hasdkell-mode package.
 ;; Disable the warning here.
 (setq byte-compile-warnings '(cl-functions))
 
@@ -110,7 +84,7 @@
 
 ;; Show file or directory at startup
 (setq initial-buffer-choice "~/.")
-(cd "~/.")
+(cd "~/")
 
 ;; Make Text Mode the default mode for new buffers
 (setq-default major-mode 'text-mode)
@@ -414,8 +388,6 @@
 ;; Guide on enabling and disabling features:
 ;; https://emacs-lsp.github.io/lsp-mode/tutorials/how-to-turn-off/
 
-(use-package lsp-ui)
-
 ;; https://github.com/flycheck/flycheck
 (setq lsp-ui-doc-enable t)
 (setq lsp-ui-doc-position "at-point")
@@ -542,7 +514,63 @@
 (global-set-key (kbd "C-c v") 'ivy-push-view)
 (global-set-key (kbd "C-c V") 'ivy-pop-view)
 
+;; Ivy-based interface to shell and system tools
+
+;; (global-set-key (kbd "C-c c") 'counsel-compile)
+;; (global-set-key (kbd "C-c g") 'counsel-git)
+;; (global-set-key (kbd "C-c j") 'counsel-git-grep)
+;; (global-set-key (kbd "C-c L") 'counsel-git-log)
+;; (global-set-key (kbd "C-c k") 'counsel-rg)
+;; (global-set-key (kbd "C-c m") 'counsel-linux-app)
+;; (global-set-key (kbd "C-c n") 'counsel-fzf)
+;; (global-set-key (kbd "C-x l") 'counsel-locate)
+;; (global-set-key (kbd "C-c J") 'counsel-file-jump)
+;; (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+;; (global-set-key (kbd "C-c w") 'counsel-wmctrl)
+
+;; Ivy-resume and other commands
+
 (global-set-key (kbd "C-c t") 'counsel-load-theme)
+
+;; (global-set-key (kbd "C-c C-r") 'ivy-resume)
+;; (global-set-key (kbd "C-c b") 'counsel-bookmark)
+;; (global-set-key (kbd "C-c d") 'counsel-descbinds)
+;; (global-set-key (kbd "C-c g") 'counsel-git)
+;; (global-set-key (kbd "C-c o") 'counsel-outline)
+;; (global-set-key (kbd "C-c F") 'counsel-org-file)
+
+;; -------------------------------------------------------------------
+;; perspective.el
+;; -------------------------------------------------------------------
+;; https://github.com/nex3/perspective-el
+
+(use-package perspective
+  :ensure t
+  :bind
+  ("C-x C-b" . persp-list-buffers)
+  :init
+  (persp-mode))
+
+;; Save perspectives when exiting Emacs
+;;(add-hook 'kill-emacs-hook #'persp-state-save)
+
+;; (persp-mode)   Creates a single default `main` perspective
+;; C-x x          Default command prefix
+;; s              (pers-switch) Create or query a perspective to switch to.
+;; `              (persp-switch-number) Switch perspective by number.
+;; k              (persp-remove-buffer) Query buffer to remove from perspective.
+;; c              (persp-kill) Query to kill a perspective.
+;; r              (persp-raname) Rename the current perspective.
+;; a              (persp-add-buffer) Query open buffer to add to the perspective.
+;; A              (persp-set-buffer) Add buffer to current perspective, remove from others.
+;; b              (persp-switch-to-buffer) Switch to a buffer in any perspective; switches perspective if necessary.
+;; i              (persp-import) Import a given perspective from another frame.
+;; n, <right>     (persp-next) Switch to the next perspective.
+;; p, <left>      (persp-prev) Switch to the previous prespective.
+;; m              (persp-merge) Temporarily merge buffers from one perspective to another.
+;; u              (persp-unmerge) Undo the effects of a persp-merge.
+;; C-s            (persp-state-save) Save all perspectives in all frames to a file.
+;; C-l            (persp-state-load) Load all perspectives from a file.
 
 ;; -------------------------------------------------------------------
 ;; ORG MODE
@@ -585,7 +613,7 @@
 (setq org-log-done 'time)
 
 ;; ---------------------------------------------------------------------------
-;; Custom Function (Elisp reference)
+;; Custom Function
 ;; ---------------------------------------------------------------------------
 
 ;; yaml-mode installed via:
@@ -616,5 +644,4 @@
       (progn (setq item (car install-list))              ;; Get next item to install
              (package-install item)                      ;; Install item
              (setq install-list (cdr install-list))))))  ;; Truncate list
-
 

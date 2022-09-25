@@ -61,10 +61,10 @@ Haskell Mode is enabled. The `lsp-haskell-process-path-hie` and
 (setq lsp-haskell-process-args-hie '())
 ```
 
-Install `gen-hie`:
+Install `implicit-hie`:
 
 ```
-cabal install gen-hie
+cabal install implicit-hie
 ```
 
 Generate `hie.yaml` in the Haskell project root directory:
