@@ -38,9 +38,6 @@
     (leaf lsp-haskell :ensure t)
     (leaf yaml-mode :ensure t)
 
-    ;; web development
-    (leaf web-mode :ensure t)
-
     ;; Load iceberg-theme BEFORE brin theme 
     ;; https://github.com/conao3/iceberg-theme.el
     (leaf iceberg-theme
@@ -82,64 +79,8 @@
       (delete-other-windows))))
 
 ;; ---------------------------------------------------------------------------
-;; Vue.js
-;; ---------------------------------------------------------------------------
-
-;; Install language server
-;; M-x lsp-install-server - select vue-semantic-server
-
-;; Required npm packages (global)
-;; vue-language-server
-
-;; Required npm packages (project's package.json)
-;; "typescript 4.7.4"
-
-;; Issues:
-;; https://stackoverflow.com/questions/73957578/
-;;         react-test-renderer-cause-typeerror-host-fileexists-is-not-a-function
-
-;; Example:
-;; https://azzamsa.com/n/vue-emacs/
-
-(require 'lsp-mode)
-
-(use-package lsp-mode
-  :commands lsp)
-
-(use-package web-mode
-  :mode "\\.vue\\'"
-  :config
-  (add-hook 'web-mode-hook #'lsp))
-
-;; Documentation:
-;; https://web-mode.org/
-
-(add-to-list 'auto-mode-alist '("\\.vue\\'"       . web-mode))
-(add-to-list 'auto-mode-alist '("\\.js\\'"        . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html?\\'"     . web-mode))
-(add-to-list 'auto-mode-alist '("\\.phtml\\'"     . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'"   . web-mode))
-(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'"   . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'"       . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mustache\\'"  . web-mode))
-(add-to-list 'auto-mode-alist '("\\.djhtml\\'"    . web-mode))
-
-;; HTML indentation
-(setq web-mode-markup-indent-offset 2)
-;; CSS indentation
-(setq web-mode-css-indent-offset 2)
-;; Script idnentation (JavaScript etc.)
-(setq web-mode-code-indent-offset 2)
-;; Force a fixed indentation
-(setq web-mode-attr-indent-offset 2)
-
-;; ---------------------------------------------------------------------------
 ;; General
 ;; ---------------------------------------------------------------------------
-
-;; Set js-mode indent level
-(setq js-indent-level 2)
 
 ;; Start frame maximized
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
