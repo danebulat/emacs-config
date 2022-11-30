@@ -37,6 +37,7 @@
     (leaf lsp-ui :ensure t)
     (leaf lsp-haskell :ensure t)
     (leaf yaml-mode :ensure t)
+    (leaf flycheck-haskell :ensure t)
 
     ;; web development
     (leaf web-mode :ensure t)
@@ -428,6 +429,8 @@
 (require 'lsp)
 (require 'lsp-haskell)
 
+(add-hook 'haskell-mode-hook #'flycheck-haskell-setup)
+
 (add-hook 'haskell-mode-hook #'lsp)
 (add-hook 'haskell-literate-mode-hook #'lsp)
 
@@ -486,7 +489,8 @@
 (setq lsp-modeline-code-actions-enable t)
 (setq lsp-modeline-diagnostics-enable nil)
 
-(setq lsp-diagnostics-provider :flymake)
+;; (setq lsp-diagnostics-provider :flymake)
+(setq lsp-diagnostics-provider :flycheck)
 (setq lsp-ui-sideline-enable t)
 (setq lsp-modeline-diagnostics-enable t)
 
